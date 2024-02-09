@@ -1,4 +1,4 @@
-module github.com/ramtinkh/MQ_System_Design.git
+module github.com/System-Alanysis-and-Design-SUT-2023/MQ_System_Design.git
 
 go 1.21.6
 
