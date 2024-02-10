@@ -1,7 +1,7 @@
-package tools
+package internals
 
 import (
-	models "github.com/System-Alanysis-and-Design-SUT-2023/MQ_System_Design/models"
+	"github.com/System-Alanysis-and-Design-SUT-2023/MQ_System_Design/models"
 	"github.com/gorilla/websocket"
 )
 

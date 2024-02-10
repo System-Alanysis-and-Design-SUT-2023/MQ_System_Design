@@ -1,8 +1,8 @@
-package tools
+package internals
 
 import (
-	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 
@@ -22,18 +22,27 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+func (s *Server) Handler(w http.ResponseWriter, r *http.Request) {
+	switch r.RequestURI {
+	case "ws/":
+		s.HandleWS(w, r)
+	default:
+		http.Error(w, "Not found", http.StatusNotFound)
+	}
+}
+
 func (s *Server) HandleWS(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		fmt.Println("Error upgrading connection: ", err)
+		log.Println("Error upgrading connection:", err)
 		return
 	}
 	if _, ok := s.conns[conn]; ok {
-		fmt.Println("Connection already exists: ", conn.RemoteAddr())
+		log.Println("Connection already exists:", conn.RemoteAddr())
 		return
 	}
 
-	fmt.Println("New connection from client: ", conn.RemoteAddr())
+	log.Println("New connection from client:", conn.RemoteAddr())
 	s.conns[conn] = true
 	s.ReadLoop(conn)
 }
@@ -43,11 +52,11 @@ func (s *Server) ReadLoop(conn *websocket.Conn) {
 		_, buf, err := conn.ReadMessage()
 		if err != nil {
 			if err == io.EOF {
-				fmt.Println("Connection closed by client: ", conn.RemoteAddr())
+				log.Println("Connection closed by client:", conn.RemoteAddr())
 				break
 			}
 
-			fmt.Println("Error reading message: ", err)
+			log.Println("Error reading message:", err)
 			continue
 		}
 
@@ -55,7 +64,7 @@ func (s *Server) ReadLoop(conn *websocket.Conn) {
 			continue
 		}
 
-		fmt.Println("Received message: ", string(buf))
+		log.Println("Received message:", string(buf))
 
 		response := ""
 		commands := strings.Fields(string(buf))
@@ -69,7 +78,7 @@ func (s *Server) ReadLoop(conn *websocket.Conn) {
 		case "unsubscribe":
 			response = HandleUnsubscribe(s.repo, conn)
 		default:
-			response = "Invalid command!\nUsage: push <topic> <message> | pull | subscribe | unsubscribe"
+			response = "Usage: push <topic> <message> | pull | subscribe | unsubscribe"
 		}
 
 		conn.WriteMessage(websocket.TextMessage, []byte(response))
@@ -80,7 +89,7 @@ func (s *Server) Broadcast(message string) {
 	for conn := range s.conns {
 		go func(conn *websocket.Conn) {
 			if err := conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
-				fmt.Println("Error writing message: ", err)
+				log.Println("Error writing message:", err)
 				return
 			}
 		}(conn)
