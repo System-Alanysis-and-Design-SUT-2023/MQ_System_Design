@@ -12,7 +12,8 @@ type Subscriber struct {
 	UserList []string
 }
 
-func (s *Subscriber) Subscribe(conn *websocket.Conn, key string) error {
+func (s *Subscriber) Subscribe(conn *websocket.Conn) error {
+	key := conn.RemoteAddr().String()
 	if _, ok := s.UserMap[key]; ok {
 		return ErrSubscriberAlreadyExists
 	}
@@ -22,7 +23,8 @@ func (s *Subscriber) Subscribe(conn *websocket.Conn, key string) error {
 	return nil
 }
 
-func (s *Subscriber) Unsubscribe(key string) error {
+func (s *Subscriber) Unsubscribe(conn *websocket.Conn) error {
+	key := conn.RemoteAddr().String()
 	if _, ok := s.UserMap[key]; !ok {
 		return ErrSubscriberDoesNotExist
 	}
@@ -45,6 +47,10 @@ func (s *Subscriber) SendData(data Data) error {
 	}
 
 	return conn.WriteMessage(websocket.TextMessage, body)
+}
+
+func (s *Subscriber) HasSubscriber() bool {
+	return len(s.UserList) > 0
 }
 
 func NewSubscriber() *Subscriber {

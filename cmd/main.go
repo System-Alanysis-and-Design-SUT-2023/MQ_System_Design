@@ -1,11 +1,13 @@
 package main
 
-import "github.com/gorilla/websocket"
+import (
+	"net/http"
+
+	"github.com/System-Alanysis-and-Design-SUT-2023/MQ_System_Design/tools"
+)
 
 func main() {
-	conn, _, err := websocket.DefaultDialer.Dial("ws://localhost:8080/ws", nil)
-	if err != nil {
-		panic(err)
-	}
-	defer conn.Close()
+	server := tools.NewServer()
+	http.Handle("/ws", http.HandlerFunc(server.HandleWS))
+	http.ListenAndServe(":8080", nil)
 }

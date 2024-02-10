@@ -6,18 +6,9 @@ type Data struct {
 	Index uint64
 }
 
-// func CreateData(key, value string) func() Data {
-// 	index := uint64(0)
-
-// 	return func() Data {
-// 		index++
-// 		return Data{
-// 			Key:   key,
-// 			Value: value,
-// 			Index: index,
-// 		}
-// 	}
-// }
+func (d Data) String() string {
+	return d.Value
+}
 
 func NewData(key, value string, index uint64) Data {
 	return Data{
