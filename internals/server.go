@@ -23,15 +23,6 @@ var upgrader = websocket.Upgrader{
 }
 
 func (s *Server) Handler(w http.ResponseWriter, r *http.Request) {
-	switch r.RequestURI {
-	case "ws/":
-		s.HandleWS(w, r)
-	default:
-		http.Error(w, "Not found", http.StatusNotFound)
-	}
-}
-
-func (s *Server) HandleWS(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("Error upgrading connection:", err)
@@ -41,10 +32,15 @@ func (s *Server) HandleWS(w http.ResponseWriter, r *http.Request) {
 		log.Println("Connection already exists:", conn.RemoteAddr())
 		return
 	}
+	log.Println("New connection:", conn.RemoteAddr())
 
-	log.Println("New connection from client:", conn.RemoteAddr())
-	s.conns[conn] = true
-	s.ReadLoop(conn)
+	switch r.RequestURI {
+	case "ws/":
+		s.conns[conn] = true
+		s.ReadLoop(conn)
+	default:
+		http.Error(w, "Not found", http.StatusNotFound)
+	}
 }
 
 func (s *Server) ReadLoop(conn *websocket.Conn) {

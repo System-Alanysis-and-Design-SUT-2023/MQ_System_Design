@@ -40,6 +40,10 @@ func (s *Subscriber) Unsubscribe(conn *websocket.Conn) error {
 }
 
 func (s *Subscriber) SendData(data Data) error {
+	if len(s.UserList) == 0 {
+		return ErrNoSubscriberExists
+	}
+
 	conn := s.UserMap[s.UserList[rand.Intn(len(s.UserList))]]
 	body, err := json.Marshal(data)
 	if err != nil {
