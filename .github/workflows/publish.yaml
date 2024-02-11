@@ -1,0 +1,46 @@
+name: Publish Image
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: Publish Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - uses: docker/setup-qemu-action@v2
+        with:
+          platforms: amd64
+
+      - uses: docker/setup-buildx-action@v2
+
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: little-core-labs/get-git-tag@v3.0.1
+        id: tagName
+        with:
+          tagRegex: "v(.*)"
+          tagRegexGroup: 1
+
+      - uses: docker/metadata-action@v4
+        id: meta
+        with:
+          images: ghcr.io/${{ github.repository }}
+
+      - uses: docker/build-push-action@v4
+        with:
+          file: "Dockerfile"
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/System-Alanysis-and-Design-SUT-2023/MQ_System_Design:${{ steps.tagName.outputs.tag }}
+          labels: ${{ steps.meta.outputs.labels }}
