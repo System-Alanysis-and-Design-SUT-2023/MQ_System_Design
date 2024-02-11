@@ -42,5 +42,5 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/System-Alanysis-and-Design-SUT-2023/MQ_System_Design:${{ steps.tagName.outputs.tag }}
+          tags: ghcr.io/system-alanysis-and-design-sut-2023/mq_system_design:${{ steps.tagName.outputs.tag }}
           labels: ${{ steps.meta.outputs.labels }}

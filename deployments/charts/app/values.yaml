@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/System-Alanysis-and-Design-SUT-2023/MQ_System_Design
+  repository: ghcr.io/system-alanysis-and-design-sut-2023/mq_system_design
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
