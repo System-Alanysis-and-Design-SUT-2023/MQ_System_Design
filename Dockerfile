@@ -6,7 +6,7 @@ ENV GGOOS=linux
 COPY ../.. .
 RUN go build -o /go/bin/app cmd/main.go
 
-FROM debian:buster-slim
+FROM alpine:3.12
 COPY --from=builder /go/bin/app /opt/server/
 COPY app.env /
 ENTRYPOINT [ "/opt/server/app" ]
