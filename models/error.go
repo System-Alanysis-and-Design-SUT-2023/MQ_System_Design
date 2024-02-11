@@ -2,8 +2,9 @@ package models
 
 import "errors"
 
-var ErrEmptyList = errors.New("List is empty")
-var ErrKeyAlreadyExists = errors.New("Key already exists")
-var ErrSubscriberAlreadyExists = errors.New("Subscriber already exists")
-var ErrSubscriberDoesNotExist = errors.New("Subscriber does not exist")
-var ErrNoSubscriberExists = errors.New("No subscriber exists")
+var ErrQueueIsEmpty = errors.New("queue is empty")
+var ErrKeyAlreadyExistsInQueue = errors.New("key already exists in queue")
+
+var ErrSubscriberAlreadyExists = errors.New("subscriber already exists")
+var ErrSubscriberDoesNotExist = errors.New("subscriber does not exist")
+var ErrNoSubscriberExists = errors.New("no subscriber exists")

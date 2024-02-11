@@ -7,7 +7,7 @@ type Queue struct {
 
 func (queue *Queue) Push(data Data) error {
 	if _, ok := queue.Map[data.Key]; ok {
-		return ErrKeyAlreadyExists
+		return ErrKeyAlreadyExistsInQueue
 	}
 
 	queue.List = append(queue.List, data)
@@ -17,7 +17,7 @@ func (queue *Queue) Push(data Data) error {
 
 func (queue *Queue) Pull() (Data, error) {
 	if len(queue.List) == 0 {
-		return Data{}, ErrEmptyList
+		return Data{}, ErrQueueIsEmpty
 	}
 
 	data := queue.List[0]

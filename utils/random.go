@@ -21,5 +21,18 @@ func RandomIP() string {
 }
 
 func RandomPort() int {
-	return RandomInt(1024, 65535)
+	return RandomInt(1024, 65536)
+}
+
+func RandomString(length int) string {
+	str := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	bytes := make([]byte, length)
+	for i := range bytes {
+		bytes[i] = str[rand.Intn(len(str))]
+	}
+	return string(bytes)
+}
+
+func RandomBool() bool {
+	return rand.Intn(2) == 0
 }
