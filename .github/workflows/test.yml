@@ -24,4 +24,4 @@ jobs:
         go-version: '1.21'
 
     - name: Testing
-      run: go test -v tests/*
+      run: make test

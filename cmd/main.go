@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -10,15 +11,22 @@ import (
 	"time"
 
 	"github.com/System-Alanysis-and-Design-SUT-2023/MQ_System_Design/internals"
+	"github.com/System-Alanysis-and-Design-SUT-2023/MQ_System_Design/utils"
 )
 
 func main() {
+	config, err := utils.LoadConfig(".")
+	if err != nil {
+		log.Fatalln("Error loading config:", err)
+	}
+	listenPort := config.ListenPort
+
 	server := internals.NewServer()
 	srv := &http.Server{
-		Addr:    ":8080",
+		Addr:    fmt.Sprintf(":%d", listenPort),
 		Handler: http.HandlerFunc(server.Handler),
 	}
-	log.Println("Server started on :8080")
+	log.Printf("Listening on port :%d...\n", listenPort)
 
 	idleConnsClosed := make(chan struct{})
 	go func() {
