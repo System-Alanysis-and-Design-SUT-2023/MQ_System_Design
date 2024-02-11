@@ -35,7 +35,7 @@ func (s *Server) Handler(w http.ResponseWriter, r *http.Request) {
 	log.Println("New connection:", conn.RemoteAddr())
 
 	switch r.RequestURI {
-	case "ws/":
+	case "/ws":
 		s.conns[conn] = true
 		s.ReadLoop(conn)
 	default:
