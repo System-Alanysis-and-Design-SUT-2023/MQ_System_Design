@@ -9,4 +9,4 @@ RUN go build -o /go/bin/app cmd/main.go
 FROM debian:buster-slim
 COPY --from=builder /go/bin/app /opt/server/
 COPY app.env /
-ENTRYPOINT ["/opt/server/app"]
+ENTRYPOINT [ "/opt/server/app" ]
