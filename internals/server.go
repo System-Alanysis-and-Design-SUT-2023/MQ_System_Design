@@ -77,7 +77,10 @@ func (s *Server) ReadLoop(conn *websocket.Conn) {
 			response = "Usage: push <topic> <message> | pull | subscribe | unsubscribe"
 		}
 
-		conn.WriteMessage(websocket.TextMessage, []byte(response))
+		if err := conn.WriteMessage(websocket.TextMessage, []byte(response)); err != nil {
+			log.Println("Error writing message:", err)
+			break
+		}
 	}
 }
 

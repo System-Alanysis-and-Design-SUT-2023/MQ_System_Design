@@ -14,8 +14,7 @@ type Repository struct {
 func (r *Repository) Push(key, value string) error {
 	data := r.CreateData(key, value)()
 	if r.Subscriber.HasSubscriber() {
-		r.Subscriber.SendData(data)
-		return nil
+		return r.Subscriber.SendData(data)
 	}
 
 	return r.Queue.Push(data)
