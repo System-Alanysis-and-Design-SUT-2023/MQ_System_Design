@@ -14,3 +14,8 @@ build:
 	go build -o bin/main cmd/main.go
 clean:
 	rm -rf bin/*
+
+build-docker:
+	docker build -t mq-service .
+run-docker:
+	docker run -p 8080:8080 mq-service
