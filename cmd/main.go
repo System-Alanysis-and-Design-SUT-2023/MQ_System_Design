@@ -28,32 +28,28 @@ func main() {
 	}
 	log.Printf("Listening on port :%d...\n", listenPort)
 
-	idleConnsClosed := make(chan struct{})
 	go func() {
-		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, os.Interrupt)
-		signal.Notify(sigint, syscall.SIGTERM)
-		<-sigint
-
-		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-		defer cancel()
-
-		if err := srv.Shutdown(ctx); err != nil {
-			log.Println("Error shutting down server:", err)
-			return
+		if err := srv.ListenAndServe(); err != nil {
+			if err != http.ErrServerClosed {
+				log.Fatalln("Error starting server:", err)
+			}
 		}
-
-		log.Println("Shutting down server...")
-
-		server.Close()
-		close(idleConnsClosed)
 	}()
 
-	if err := srv.ListenAndServe(); err != nil {
-		if err != http.ErrServerClosed {
-			log.Fatalln("Error starting server:", err)
-		}
+	sigint := make(chan os.Signal, 1)
+	signal.Notify(sigint, os.Interrupt)
+	signal.Notify(sigint, syscall.SIGTERM)
+	<-sigint
+
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Println("Error shutting down server:", err)
+		return
 	}
-	<-idleConnsClosed
-	log.Println("Server shutdown complete")
+
+	log.Println("Shutting down server...")
+	server.Close()
+	log.Println("Server shutdown complete!")
 }
