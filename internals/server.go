@@ -23,19 +23,22 @@ var upgrader = websocket.Upgrader{
 }
 
 func (s *Server) Handler(w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("Error upgrading connection:", err)
-		return
-	}
-	if _, ok := s.conns[conn]; ok {
-		log.Println("Connection already exists:", conn.RemoteAddr())
-		return
-	}
-	log.Println("New connection:", conn.RemoteAddr())
-
 	switch r.RequestURI {
+	case "/health":
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
 	case "/ws":
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			log.Println("Error upgrading connection:", err)
+			return
+		}
+		if _, ok := s.conns[conn]; ok {
+			log.Println("Connection already exists:", conn.RemoteAddr())
+			return
+		}
+		log.Println("New connection:", conn.RemoteAddr())
+
 		s.conns[conn] = true
 		s.ReadLoop(conn)
 	default:
