@@ -3,9 +3,6 @@ Developement of a Message Queue System for System Design Course Project
 
 First navigate to the project directory
 
-Using command 
+You can set up requirements using this command:
 
-'go mod download'
-
-
-> func()
+> go mod download
