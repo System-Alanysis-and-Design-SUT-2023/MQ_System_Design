@@ -9,3 +9,4 @@ Using command
 
 '''python
 func()
+'''
