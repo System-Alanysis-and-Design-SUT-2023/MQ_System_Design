@@ -26,7 +26,9 @@ func (s *Server) Handler(w http.ResponseWriter, r *http.Request) {
 	switch r.RequestURI {
 	case "/health":
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
+		if _, err := w.Write([]byte("OK")); err != nil {
+			log.Println("Error writing response:", err)
+		}
 	case "/ws":
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
