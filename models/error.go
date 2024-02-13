@@ -2,8 +2,6 @@ package models
 
 import "errors"
 
-var ErrWrongDataCreation = errors.New("data created wrong")
-
 var ErrQueueIsEmpty = errors.New("queue is empty")
 var ErrKeyAlreadyExistsInQueue = errors.New("key already exists in queue")
 
