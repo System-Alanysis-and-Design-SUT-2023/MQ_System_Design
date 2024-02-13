@@ -5,4 +5,7 @@ First navigate to the project directory
 
 Using command 
 
-'go mod'
+'go mod download'
+
+'''
+func()
