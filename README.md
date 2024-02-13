@@ -7,5 +7,5 @@ Using command
 
 'go mod download'
 
-'''
+'''python
 func()
