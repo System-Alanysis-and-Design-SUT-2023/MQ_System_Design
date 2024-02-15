@@ -6,6 +6,8 @@ import (
 	"github.com/System-Alanysis-and-Design-SUT-2023/MQ_System_Design/models"
 )
 
+const errorMessage = `expected "%v", got "%v"`
+
 func TestPushAndPull(t *testing.T) {
 	queue := models.NewQueue()
 
