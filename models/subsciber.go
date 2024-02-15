@@ -45,7 +45,7 @@ func (s *Subscriber) SendData(data Data) error {
 	}
 
 	conn := s.UserMap[s.UserList[rand.Intn(len(s.UserList))]]
-	body, err := json.Marshal(data)
+	body, err := json.Marshal([]string{data.Key, data.Value})
 	if err != nil {
 		return err
 	}

@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -11,39 +11,10 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
-func HandlerFunc(w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("Error upgrading connection:", err)
-		return
-	}
-	defer conn.Close()
-
-	for {
-		messageType, message, err := conn.ReadMessage()
-		if err != nil {
-			log.Println("Error reading message:", err)
-			return
-		}
-
-		err = conn.WriteMessage(messageType, message)
-		if err != nil {
-			log.Println("Error writing message:", err)
-			return
-		}
-	}
-}
-
 func TestSubscribeAndUnsubscribe(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(HandlerFunc))
 	defer server.Close()
 
-	subscriber := models.NewSubscriber()
 	url := "ws" + strings.TrimPrefix(server.URL, "http") + "/ws/"
 	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
@@ -51,6 +22,7 @@ func TestSubscribeAndUnsubscribe(t *testing.T) {
 	}
 	defer conn.Close()
 
+	subscriber := models.NewSubscriber()
 	tests := []struct {
 		name       string
 		fn         func(*websocket.Conn) error
@@ -110,7 +82,6 @@ func TestSendData(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(HandlerFunc))
 	defer server.Close()
 
-	subscriber := models.NewSubscriber()
 	url := "ws" + strings.TrimPrefix(server.URL, "http") + "/ws/"
 	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
@@ -118,6 +89,7 @@ func TestSendData(t *testing.T) {
 	}
 	defer conn.Close()
 
+	subscriber := models.NewSubscriber()
 	if err = subscriber.Subscribe(conn); err != nil {
 		t.Errorf(errorMessage, nil, err)
 	}
@@ -126,14 +98,16 @@ func TestSendData(t *testing.T) {
 	}
 
 	t.Run("send data to subscriber", func(t *testing.T) {
-		if err := subscriber.SendData(models.NewData("key", "value", 10)); err != nil {
+		data := models.NewData("USA", "California", 10)
+		if err := subscriber.SendData(data); err != nil {
 			t.Errorf(errorMessage, nil, err)
 		}
 
+		expectedMessage := fmt.Sprintf(`["%s","%s"]`, data.Key, data.Value)
 		if _, response, err := conn.ReadMessage(); err != nil {
 			t.Errorf(errorMessage, nil, err)
-		} else if string(response) != `{"Key":"key","Value":"value","Index":10}` {
-			t.Errorf("expected %s, got %s", `{"Key":"key","Value":"value","Index":10}`, string(response))
+		} else if string(response) != expectedMessage {
+			t.Errorf(errorMessageString, expectedMessage, string(response))
 		}
 	})
 

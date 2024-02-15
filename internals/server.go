@@ -58,11 +58,7 @@ func (s *Server) ReadLoop(conn *websocket.Conn) {
 			}
 
 			log.Println("Error reading message:", err)
-			continue
-		}
-
-		if len(buf) == 0 {
-			continue
+			return
 		}
 
 		log.Println("Received message:", string(buf))

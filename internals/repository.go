@@ -6,13 +6,15 @@ import (
 )
 
 type Repository struct {
+	IndexCount uint64
 	Queue      *models.Queue
 	Subscriber *models.Subscriber
-	CreateData func(key, value string) func() models.Data
 }
 
 func (r *Repository) Push(key, value string) error {
-	data := r.CreateData(key, value)()
+	r.IndexCount++
+	data := models.NewData(key, value, r.IndexCount)
+
 	if r.Subscriber.HasSubscriber() {
 		return r.Subscriber.SendData(data)
 	}
@@ -34,14 +36,8 @@ func (r *Repository) Unsubscribe(conn *websocket.Conn) error {
 
 func NewRepository() *Repository {
 	return &Repository{
+		IndexCount: 0,
 		Queue:      models.NewQueue(),
 		Subscriber: models.NewSubscriber(),
-		CreateData: func(key, value string) func() models.Data {
-			index := uint64(0)
-			return func() models.Data {
-				index++
-				return models.NewData(key, value, index)
-			}
-		},
 	}
 }

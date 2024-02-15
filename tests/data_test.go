@@ -17,7 +17,7 @@ func TestDataToString(t *testing.T) {
 	}
 
 	for _, data := range datas {
-		expected := fmt.Sprintf(`["%s","%s"]`, data.Key, data.Value)
+		expected := fmt.Sprintf(`{"Key":"%s","Value":"%s","Index":%d}`, data.Key, data.Value, data.Index)
 		if data.String() != expected {
 			t.Errorf("Expected %s but got %s", expected, data)
 		}

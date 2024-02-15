@@ -11,7 +11,7 @@ type Data struct {
 }
 
 func (d Data) String() string {
-	str, _ := json.Marshal([]string{d.Key, d.Value})
+	str, _ := json.Marshal(d)
 	return string(str)
 }
 
