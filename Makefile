@@ -21,3 +21,10 @@ build-docker:
 	docker build -t mq-service .
 run-docker:
 	docker run -p 8080:8080 mq-service
+
+helm-install:
+	helm install mq-service ./deployments/charts/app
+helm-upgrade:
+	helm upgrade mq-service ./deployments/charts/app
+helm-uninstall:
+	helm uninstall mq-service
