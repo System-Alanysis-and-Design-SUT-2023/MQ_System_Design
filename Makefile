@@ -17,9 +17,9 @@ clean:
 lint:
 	golangci-lint run
 
-build-docker:
+docker-build:
 	docker build -t mq-service .
-run-docker:
+docker-run:
 	docker run -p 8080:8080 mq-service
 
 helm-install:
