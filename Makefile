@@ -14,6 +14,8 @@ build:
 	go build -o bin/main cmd/main.go
 clean:
 	rm -rf bin/*
+lint:
+	golangci-lint run
 
 build-docker:
 	docker build -t mq-service .
